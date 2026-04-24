@@ -1,7 +1,7 @@
 # Azure Data Factory: Copy Files Matching a Specific Name Pattern
 
 ---
-![1](/images-ADF_FilePattern_Copy_Demo/1.png)
+![1](./images-ADF_FilePattern_Copy_Demo/1.png)
 
 ##  Scenario Overview
 
