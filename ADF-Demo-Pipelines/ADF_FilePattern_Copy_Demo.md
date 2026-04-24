@@ -169,7 +169,7 @@ Click **Add dynamic content** and enter:
 > - `endsWith(item().name, '.csv')` → keeps only files ending with `.csv`
 > - `@and(...)` → BOTH conditions must be true — eliminates `sales_summary.xlsx`
 ---
-![5](/images-ADF_FilePattern_Copy_Demo/5.png)
+![5](./images-ADF_FilePattern_Copy_Demo/5.png)
 ## 🔄 Step 4: Add ForEach Activity (Iterate Matched Files)
 
 1. Drag **ForEach** onto the canvas
