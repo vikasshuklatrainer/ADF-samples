@@ -114,9 +114,9 @@ In real pipelines, landing zones are shared and noisy. Pattern-based filtering e
 > Binary datasets copy files as-is without parsing content — perfect for file movement regardless of format (CSV, JSON, Parquet, etc.).
 
 ---
-![7](/images-ADF_FilePattern_Copy_Demo/7.png)
+![7](./images-ADF_FilePattern_Copy_Demo/7.png)
 
-![7.1](/images-ADF_FilePattern_Copy_Demo/7.1.png)
+![7.1](./images-ADF_FilePattern_Copy_Demo/7.1.png)
 
 
 
@@ -137,7 +137,7 @@ In real pipelines, landing zones are shared and noisy. Pattern-based filtering e
 
 ---
 
-![3](/images-ADF_FilePattern_Copy_Demo/3.png)
+![3](./images-ADF_FilePattern_Copy_Demo/3.png)
 
 
 ## Step 3: Add Filter Activity (Apply the Name Pattern)
@@ -153,7 +153,7 @@ Click **Add dynamic content** and enter:
 @activity('GMT_ListLandingFiles').output.childItems
 ```
 
-![4](/images-ADF_FilePattern_Copy_Demo/4.png)
+![4](./images-ADF_FilePattern_Copy_Demo/4.png)
 
 ### Condition field:
 Click **Add dynamic content** and enter:
@@ -188,7 +188,7 @@ Click **Add dynamic content** and enter:
 
 ---
 
-![8](/images-ADF_FilePattern_Copy_Demo/8.png)
+![8](./images-ADF_FilePattern_Copy_Demo/8.png)
 
 
 ## 📋 Step 5: Add Copy Activity Inside ForEach
@@ -202,7 +202,7 @@ Click **Add dynamic content** and enter:
 - **Dataset properties:**
   - `fileName` → Add dynamic content: `@item().name`
 
-![9](/images-ADF_FilePattern_Copy_Demo/9.png)
+![9](./images-ADF_FilePattern_Copy_Demo/9.png)
 
 
 ### Sink Tab:
@@ -210,7 +210,7 @@ Click **Add dynamic content** and enter:
 - **Dataset properties:**
   - `fileName` → Add dynamic content: `@item().name`
 
-![9.2](/images-ADF_FilePattern_Copy_Demo/9.2.png)
+![9.2](./images-ADF_FilePattern_Copy_Demo/9.2.png)
 
 
 ### Settings Tab (Optional):
