@@ -79,7 +79,7 @@ In real pipelines, landing zones are shared and noisy. Pattern-based filtering e
    - Leave **Directory** and **File** blank (we're pointing at the folder)
 6. **Publish All**
 
-![2](/images-ADF_FilePattern_Copy_Demo/2.png)
+![2](./images-ADF_FilePattern_Copy_Demo/2.png)
 
 
 ### 1b. Landing-or-Source File Dataset (Parameterized — for Copy Activity Source)
@@ -94,9 +94,9 @@ In real pipelines, landing zones are shared and noisy. Pattern-based filtering e
    - File name → Add dynamic content: `@dataset().fileName`
 6. **Publish All**
 
-![6](/images-ADF_FilePattern_Copy_Demo/6.png)
+![6](./images-ADF_FilePattern_Copy_Demo/6.png)
 
-![6.1](/images-ADF_FilePattern_Copy_Demo/6.1.png)
+![6.1](./images-ADF_FilePattern_Copy_Demo/6.1.png)
 
 ### 1c. Processed-or-Destination Container Dataset (Parameterized — for Copy Activity Sink)
 
