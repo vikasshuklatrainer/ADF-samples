@@ -20,7 +20,7 @@ A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts
 **Why this matters:** A full table copy of millions of rows every night is wasteful. The watermark pattern scales linearly with the volume of *changes*, not the total table size.
 
 ---
-![adf incremental copy diagram](/adf_incremental_copy_diagram.svg)
+![adf incremental copy diagram](adf_incremental_copy_diagram.svg)
 
 
 
