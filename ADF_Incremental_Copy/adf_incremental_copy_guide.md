@@ -407,4 +407,4 @@ After Run 3:   2026-04-22 15:00:00
 
 ---
 
-*Generated for Azure Data Factory v2 · April 2026*
+
