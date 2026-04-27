@@ -8,6 +8,7 @@
 
 A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts and status updates continuously. Instead of copying the entire table on every pipeline run (expensive and slow), the pipeline copies **only the rows that changed since the last run** using a **high-watermark** timestamp column.
 
+![1](/images/1.png)
 
 [Download SQL scripts file ](adf_incremental_copy.sql)
 
@@ -78,22 +79,30 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 2. Name: `LS_AzureSqlDB`
 3. Fill server, database, credentials → **Test** → **Create**
 
+![2](./images/2.png)
+
+
+
 ### 2b. Azure Data Lake Storage Gen2
 1. **+ New** → Azure Data Lake Storage Gen2
 2. Name: `LS_ADLS`
 3. Select storage account → **Test** → **Create**
 
+![3](./images/3.png)
+
 ---
 
 ## 📦 Step 3: Create Datasets
 
-### 3a. Source — SQL Orders (parameterized for reuse)
+### 3a. Source — SQL Orders 
 
 1. **Author** → **Datasets** → **+ New** → Azure SQL Database
 2. Name: `DS_SQL_Orders`
 3. Linked Service: `LS_AzureSqlDB`
 4. Table: `dbo.Orders`
 5. **Publish All**
+
+![4](./images/4.png)
 
 ### 3b. Source — Watermark Control Table
 
@@ -102,6 +111,9 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 3. Linked Service: `LS_AzureSqlDB`
 4. Table: `dbo.WatermarkTable`
 5. **Publish All**
+
+![5](./images/5.png)
+
 
 ### 3c. Sink — ADLS Parquet (parameterized)
 
@@ -114,6 +126,10 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
    - Directory: `orders_delta`
    - File: `@dataset().fileName`
 6. **Publish All**
+
+![6](./images/6.png)
+![7](./images/7.png)
+
 
 ---
 
@@ -136,6 +152,11 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 **Output reference:** `@activity('LKP_GetOldWatermark').output.firstRow.OldWatermark`
 
+![8](./images/8.png)
+![9](./images/9.png)
+
+
+
 ---
 
 ## 🔍 Step 5: Lookup Activity — Get New Watermark
@@ -155,6 +176,10 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 **Output reference:** `@activity('LKP_GetNewWatermark').output.firstRow.NewWatermark`
 
+![10](./images/10.png)
+![11](./images/11.png)
+
+
 ---
 
 ## 📋 Step 6: Copy Activity — Delta Rows Only
@@ -168,6 +193,8 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 - Use query: **Query**
 - Query — click **Add dynamic content** and enter:
 
+
+
 ```
 SELECT *
 FROM   dbo.Orders
@@ -175,6 +202,8 @@ WHERE  ModifiedDate > '@{activity('LKP_GetOldWatermark').output.firstRow.OldWate
 AND    ModifiedDate <= '@{activity('LKP_GetNewWatermark').output.firstRow.NewWatermark}'
 ORDER  BY ModifiedDate ASC
 ```
+![12](./images/12.png)
+
 
 ### Sink Tab:
 - Dataset: `DS_ADLS_DeltaParquet`
@@ -184,6 +213,9 @@ ORDER  BY ModifiedDate ASC
     orders_@{formatDateTime(activity('LKP_GetNewWatermark').output.firstRow.NewWatermark,'yyyyMMdd_HHmmss')}.parquet
     ```
 - **Copy behavior:** Append
+
+![13](./images/13.png)
+
 
 ### Settings Tab:
 - Enable **Fault tolerance** → Skip incompatible rows
@@ -201,12 +233,17 @@ ORDER  BY ModifiedDate ASC
    - Stored procedure name: `[dbo].[usp_UpdateWatermark]`
    - **Stored procedure parameters** → click **Import** then set:
 
+
+
+
 | Name | Type | Value (dynamic content) |
 |---|---|---|
 | `TableName` | String | `dbo.Orders` |
 | `NewWatermark` | DateTime | `@activity('LKP_GetNewWatermark').output.firstRow.NewWatermark` |
 
 > ✅ This is the critical step — if this activity fails, the watermark is NOT updated, so the next run will safely re-copy the same delta. This gives you **at-least-once delivery** guarantees.
+
+![14](./images/14.png)
 
 ---
 
@@ -233,6 +270,9 @@ ORDER  BY ModifiedDate ASC
   '}'
 ))
 ```
+
+![15](./images/15.png)
+
 
 ---
 
