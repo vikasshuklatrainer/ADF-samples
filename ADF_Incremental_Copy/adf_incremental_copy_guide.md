@@ -2,7 +2,7 @@
 
 ---
 
-## 📌 Scenario Overview
+## Scenario Overview
 
 **Scenario: Daily Incremental Copy of Orders to ADLS**
 
@@ -25,7 +25,7 @@ A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts
 
 
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 ```
 [Azure SQL DB]                      [ADLS Gen2 / Sink SQL Table]
@@ -45,7 +45,7 @@ A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 
 - **Azure Data Factory** (v2)
 - **Azure SQL Database** with `dbo.Orders` and `dbo.WatermarkTable` (run SQL scripts first)
@@ -54,7 +54,7 @@ A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts
 
 ---
 
-## 🗄️ Step 1: Run the SQL Setup Scripts
+##  Step 1: Run the SQL Setup Scripts
 
 Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
@@ -68,11 +68,11 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 | Part 6 | `dbo.usp_UpdateWatermark` stored procedure |
 | Part 7 | Helper verification queries |
 
-> ⚠️ Run Part 2 first, then trigger **Run 1** in ADF, then run Part 3 for **Run 2**, etc. This simulates real-world incremental arrivals.
+> Run Part 2 first, then trigger **Run 1** in ADF, then run Part 3 for **Run 2**, etc. This simulates real-world incremental arrivals.
 
 ---
 
-## 🔗 Step 2: Create Linked Services
+## Step 2: Create Linked Services
 
 ### 2a. Azure SQL Database
 1. **Manage** → **Linked Services** → **+ New** → Azure SQL Database
@@ -92,7 +92,7 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 ---
 
-## 📦 Step 3: Create Datasets
+## Step 3: Create Datasets
 
 ### 3a. Source — SQL Orders 
 
@@ -133,7 +133,7 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 ---
 
-## 🔍 Step 4: Lookup Activity — Get Old Watermark
+## Step 4: Lookup Activity — Get Old Watermark
 
 1. **Author** → **Pipelines** → **+ New Pipeline**
 2. Name: `PL_Incremental_Copy`
@@ -159,7 +159,7 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 ---
 
-## 🔍 Step 5: Lookup Activity — Get New Watermark
+## Step 5: Lookup Activity — Get New Watermark
 
 1. Drag a second **Lookup** onto the canvas
 2. Name it `LKP_GetNewWatermark`
@@ -182,7 +182,7 @@ Execute `adf_incremental_copy.sql` in your Azure SQL Database in order:
 
 ---
 
-## 📋 Step 6: Copy Activity — Delta Rows Only
+## Step 6: Copy Activity — Delta Rows Only
 
 1. Drag **Copy Data** onto the canvas
 2. Name it `CPY_DeltaRows`
@@ -223,7 +223,7 @@ ORDER  BY ModifiedDate ASC
 
 ---
 
-## ⚙️ Step 7: Stored Procedure Activity — Update Watermark
+## Step 7: Stored Procedure Activity — Update Watermark
 
 1. Drag **Stored Procedure** activity onto the canvas
 2. Name it `SP_UpdateWatermark`
@@ -247,7 +247,7 @@ ORDER  BY ModifiedDate ASC
 
 ---
 
-## 🔀 Step 8: Add Failure Alert (Web Activity)
+## Step 8: Add Failure Alert (Web Activity)
 
 1. Drag **Web Activity** onto the canvas
 2. Name it `WEB_AlertOnFailure`
@@ -276,7 +276,7 @@ ORDER  BY ModifiedDate ASC
 
 ---
 
-## ⏱️ Step 9: Add Schedule Trigger
+## Step 9: Add Schedule Trigger
 
 1. Click **Add trigger** → **New/Edit**
 2. Name: `TRG_Daily_Incremental`
@@ -287,7 +287,7 @@ ORDER  BY ModifiedDate ASC
 
 ---
 
-## 🧪 Step 10: Debug — Simulate 3 Runs
+## Step 10: Debug — Simulate 3 Runs
 
 ### Run 1 — Full initial load
 
@@ -349,7 +349,7 @@ ORDER  BY ModifiedDate ASC
 
 ---
 
-## 📊 Watermark State Across All Runs
+## Watermark State Across All Runs
 
 ```
 WatermarkTable State
@@ -369,7 +369,7 @@ After Run 3:   2026-04-22 15:00:00
 
 ---
 
-## 🔑 Key ADF Expression Reference
+## Key ADF Expression Reference
 
 | Expression | Returns |
 |---|---|
@@ -381,7 +381,7 @@ After Run 3:   2026-04-22 15:00:00
 
 ---
 
-## 🚨 Common Pitfalls to Avoid
+## Common Pitfalls to Avoid
 
 | Pitfall | Impact | Fix |
 |---|---|---|
@@ -394,7 +394,7 @@ After Run 3:   2026-04-22 15:00:00
 
 ---
 
-## 💡 Extension Ideas
+## Extension Ideas
 
 | Enhancement | How |
 |---|---|
