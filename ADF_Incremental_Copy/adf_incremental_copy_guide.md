@@ -8,7 +8,7 @@
 
 A retail company's `dbo.Orders` table in Azure SQL Database receives new inserts and status updates continuously. Instead of copying the entire table on every pipeline run (expensive and slow), the pipeline copies **only the rows that changed since the last run** using a **high-watermark** timestamp column.
 
-![1](/images/1.png)
+![1](./images/1.png)
 
 [Download SQL scripts file ](adf_incremental_copy.sql)
 
