@@ -1,11 +1,11 @@
-# 🚀 Azure Logic App: JSON to SQL Ingestion
+#  Azure Logic App: JSON to SQL Ingestion
 
-## 📌 Overview
+##  Overview
 This Logic App reads a JSON file from Azure Blob Storage and inserts records into an Azure SQL table.
 
 ---
 
-## 🏗️ Architecture
+## ️ Architecture
 
 Blob Storage (JSON File)
         ↓
@@ -21,7 +21,7 @@ Insert Row (SQL)
 
 ---
 
-## ⚙️ Prerequisites
+##  Prerequisites
 
 - Azure Storage Account
 - Azure SQL Database
@@ -155,7 +155,7 @@ Insert Row (SQL)
 
 ---
 
-## 🧱 SQL Table Schema
+## SQL Table Schema
 
 ```sql
 CREATE TABLE Employees (
@@ -175,7 +175,7 @@ CREATE TABLE Employees (
 
 ---
 
-## 🧱 Implementation Steps
+##  Implementation Steps
 
 ### 1. Trigger
 Use: When a blob is added or modified OR Recurrence
@@ -214,7 +214,7 @@ Use Insert Row (V2) and map fields
 
 ---
 
-## 🧪 Testing
+## Testing
 
 1. Upload JSON file
 2. Run Logic App
@@ -222,6 +222,6 @@ Use Insert Row (V2) and map fields
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 Serverless pipeline to ingest JSON into SQL using Azure Logic Apps.
