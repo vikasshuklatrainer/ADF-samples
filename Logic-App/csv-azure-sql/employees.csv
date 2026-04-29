@@ -1,0 +1,11 @@
+Name,Department,Salary,JoinDate,Email,City,Country,EmploymentType,YearsExperience,IsActive
+Alice Johnson,Engineering,85000.00,2022-03-15,alice.johnson@company.com,New York,USA,Full-Time,5,true
+Bob Smith,Marketing,72000.00,2021-07-01,bob.smith@company.com,Los Angeles,USA,Full-Time,3,true
+Carol White,HR,68000.00,2023-01-10,carol.white@company.com,Chicago,USA,Part-Time,2,true
+David Lee,Engineering,95000.00,2020-06-20,david.lee@company.com,San Francisco,USA,Full-Time,8,true
+Eva Martinez,Finance,78000.00,2021-11-30,eva.martinez@company.com,Houston,USA,Full-Time,4,true
+Frank Brown,Marketing,65000.00,2023-05-18,frank.brown@company.com,Phoenix,USA,Contract,1,true
+Grace Kim,Engineering,91000.00,2019-09-25,grace.kim@company.com,Seattle,USA,Full-Time,7,true
+Henry Davis,HR,62000.00,2022-08-14,henry.davis@company.com,Boston,USA,Part-Time,2,false
+Isla Turner,Finance,80000.00,2020-12-03,isla.turner@company.com,Dallas,USA,Full-Time,6,true
+James Wilson,Engineering,88000.00,2021-04-22,james.wilson@company.com,Austin,USA,Full-Time,5,true
