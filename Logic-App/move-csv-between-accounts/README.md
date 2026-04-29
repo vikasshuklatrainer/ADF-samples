@@ -1,17 +1,17 @@
-# 🚀 Azure Logic App: Move CSV Between Storage Accounts
+#  Azure Logic App: Move CSV Between Storage Accounts
 
-## 📌 Overview
+##  Overview
 This Logic App moves a CSV file from one Azure Storage Account (source) to another (destination).
 
 ---
 
-## 🏗️ Architecture
+## ️ Architecture
 
 Source Blob Storage → Logic App → Destination Blob Storage
 
 ---
 
-## ⚙️ Prerequisites
+##  Prerequisites
 
 - Two Azure Storage Accounts
 - Blob containers in both accounts
@@ -19,7 +19,7 @@ Source Blob Storage → Logic App → Destination Blob Storage
 
 ---
 
-## 🧱 Steps
+##  Steps
 
 ### 1. Trigger
 Use **When a blob is added or modified (properties only)**
@@ -56,7 +56,7 @@ Action: **Delete blob**
 
 ---
 
-## 📂 Example
+##  Example
 
 Input:
 ```
@@ -70,7 +70,7 @@ file1.csv (moved to destination)
 
 ---
 
-## 🔐 Best Practices
+##  Best Practices
 
 - Use Managed Identity
 - Add retry policies
@@ -78,7 +78,7 @@ file1.csv (moved to destination)
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 1. Upload CSV to source container
 2. Check destination container
@@ -86,6 +86,6 @@ file1.csv (moved to destination)
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 This Logic App enables automated file movement across storage accounts.
