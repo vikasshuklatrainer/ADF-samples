@@ -1,0 +1,189 @@
+<svg viewBox="0 0 1100 680" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <!-- Background -->
+  <rect width="1100" height="680" fill="#F0F4F8"/>
+
+  <!-- Title -->
+  <text x="550" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1A2B4A">Azure Data Factory: Data Lake → Data Warehouse → Data Mart</text>
+  <text x="550" y="58" text-anchor="middle" font-size="12" fill="#555">End-to-End Analytics Pipeline Exercise</text>
+
+  <!-- ===== LAYER 1: DATA LAKE ===== -->
+  <rect x="30" y="80" width="280" height="520" rx="14" fill="#E8F4FD" stroke="#2196F3" stroke-width="2"/>
+  <rect x="30" y="80" width="280" height="40" rx="14" fill="#2196F3"/>
+  <rect x="30" y="106" width="280" height="14" fill="#2196F3"/>
+  <text x="170" y="106" text-anchor="middle" font-size="14" font-weight="bold" fill="white">① DATA LAKE</text>
+  <text x="170" y="120" text-anchor="middle" font-size="10" fill="#E3F2FD">ADLS Gen2 — Raw Zone</text>
+
+  <!-- ADLS icon box -->
+  <rect x="55" y="140" width="230" height="60" rx="8" fill="white" stroke="#90CAF9" stroke-width="1.5"/>
+  <text x="170" y="161" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565C0">📁 container: raw/</text>
+  <text x="170" y="177" text-anchor="middle" font-size="10" fill="#444">raw_sales_transactions.csv</text>
+  <text x="170" y="191" text-anchor="middle" font-size="10" fill="#444">raw_customers.csv  |  raw_products.csv</text>
+
+  <!-- Schema box -->
+  <rect x="55" y="215" width="230" height="115" rx="8" fill="white" stroke="#90CAF9" stroke-width="1.5"/>
+  <text x="170" y="233" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565C0">Sample: raw_sales_transactions</text>
+  <line x1="65" y1="238" x2="275" y2="238" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="70" y="252" font-size="9" fill="#333">transaction_id  |  transaction_date</text>
+  <text x="70" y="266" font-size="9" fill="#333">customer_id     |  product_id</text>
+  <text x="70" y="280" font-size="9" fill="#333">quantity        |  unit_price</text>
+  <text x="70" y="294" font-size="9" fill="#333">discount        |  region</text>
+  <text x="70" y="310" font-size="9" fill="#888" font-style="italic">20 rows · unvalidated · no joins</text>
+
+  <!-- Characteristics -->
+  <rect x="55" y="345" width="230" height="110" rx="8" fill="#DBEAFE" stroke="#90CAF9" stroke-width="1"/>
+  <text x="170" y="363" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E3A5F">Characteristics</text>
+  <text x="70" y="379" font-size="9" fill="#333">✔ Schema-on-read (CSV / Parquet / JSON)</text>
+  <text x="70" y="393" font-size="9" fill="#333">✔ Stores ALL raw data (no transformation)</text>
+  <text x="70" y="407" font-size="9" fill="#333">✔ Unlimited scale, low cost</text>
+  <text x="70" y="421" font-size="9" fill="#333">✔ Source of truth — never delete</text>
+  <text x="70" y="435" font-size="9" fill="#333">✔ Supports batch &amp; streaming ingest</text>
+
+  <!-- ADF Badge -->
+  <rect x="55" y="470" width="230" height="50" rx="8" fill="#1565C0"/>
+  <text x="170" y="491" text-anchor="middle" font-size="10" font-weight="bold" fill="white">ADF Activity: Copy Data</text>
+  <text x="170" y="507" text-anchor="middle" font-size="9" fill="#BBDEFB">Validation → Copy (3×) → Archive</text>
+
+  <!-- Pipeline name -->
+  <rect x="55" y="535" width="230" height="30" rx="6" fill="white" stroke="#2196F3" stroke-width="1"/>
+  <text x="170" y="555" text-anchor="middle" font-size="9" fill="#1565C0" font-weight="bold">PL_DataLake_to_DataWarehouse</text>
+
+  <!-- ===== ARROW 1 ===== -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+  <line x1="312" y1="370" x2="388" y2="370" stroke="#555" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="6,3"/>
+  <rect x="316" y="340" width="68" height="52" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/>
+  <text x="350" y="360" text-anchor="middle" font-size="9" font-weight="bold" fill="#E65100">ADF</text>
+  <text x="350" y="373" text-anchor="middle" font-size="8" fill="#555">Mapping</text>
+  <text x="350" y="384" text-anchor="middle" font-size="8" fill="#555">Data Flow</text>
+
+  <!-- ===== LAYER 2: DATA WAREHOUSE ===== -->
+  <rect x="390" y="80" width="310" height="520" rx="14" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+  <rect x="390" y="80" width="310" height="40" rx="14" fill="#388E3C"/>
+  <rect x="390" y="106" width="310" height="14" fill="#388E3C"/>
+  <text x="545" y="106" text-anchor="middle" font-size="14" font-weight="bold" fill="white">② DATA WAREHOUSE</text>
+  <text x="545" y="120" text-anchor="middle" font-size="10" fill="#C8E6C9">Azure Synapse Analytics — Star Schema</text>
+
+  <!-- Fact table -->
+  <rect x="430" y="140" width="230" height="90" rx="8" fill="white" stroke="#A5D6A7" stroke-width="1.5"/>
+  <rect x="430" y="140" width="230" height="24" rx="8" fill="#388E3C"/>
+  <rect x="430" y="152" width="230" height="12" fill="#388E3C"/>
+  <text x="545" y="157" text-anchor="middle" font-size="11" font-weight="bold" fill="white">⭐ FactSales</text>
+  <text x="440" y="177" font-size="9" fill="#333">date_key · customer_key · product_key</text>
+  <text x="440" y="190" font-size="9" fill="#333">region_key · transaction_id</text>
+  <text x="440" y="204" font-size="9" fill="#1B5E20" font-weight="bold">quantity · gross_sales · net_sales</text>
+  <text x="440" y="217" font-size="9" fill="#1B5E20" font-weight="bold">cost_of_goods · gross_profit</text>
+
+  <!-- Dim tables -->
+  <rect x="415" y="248" width="102" height="72" rx="6" fill="white" stroke="#A5D6A7" stroke-width="1.5"/>
+  <text x="466" y="264" text-anchor="middle" font-size="10" font-weight="bold" fill="#2E7D32">DimDate</text>
+  <line x1="425" y1="268" x2="508" y2="268" stroke="#C8E6C9"/>
+  <text x="425" y="281" font-size="8" fill="#555">date_key (PK)</text>
+  <text x="425" y="293" font-size="8" fill="#555">year · month · quarter</text>
+  <text x="425" y="305" font-size="8" fill="#555">day_name · is_weekend</text>
+
+  <rect x="528" y="248" width="108" height="72" rx="6" fill="white" stroke="#A5D6A7" stroke-width="1.5"/>
+  <text x="582" y="264" text-anchor="middle" font-size="10" font-weight="bold" fill="#2E7D32">DimCustomer</text>
+  <line x1="538" y1="268" x2="626" y2="268" stroke="#C8E6C9"/>
+  <text x="538" y="281" font-size="8" fill="#555">customer_key (PK)</text>
+  <text x="538" y="293" font-size="8" fill="#555">full_name · email</text>
+  <text x="538" y="305" font-size="8" fill="#555">segment · SCD Type 2</text>
+
+  <rect x="415" y="334" width="102" height="68" rx="6" fill="white" stroke="#A5D6A7" stroke-width="1.5"/>
+  <text x="466" y="350" text-anchor="middle" font-size="10" font-weight="bold" fill="#2E7D32">DimProduct</text>
+  <line x1="425" y1="354" x2="508" y2="354" stroke="#C8E6C9"/>
+  <text x="425" y="367" font-size="8" fill="#555">product_key (PK)</text>
+  <text x="425" y="379" font-size="8" fill="#555">name · category</text>
+  <text x="425" y="391" font-size="8" fill="#555">cost_price · list_price</text>
+
+  <rect x="528" y="334" width="108" height="68" rx="6" fill="white" stroke="#A5D6A7" stroke-width="1.5"/>
+  <text x="582" y="350" text-anchor="middle" font-size="10" font-weight="bold" fill="#2E7D32">DimRegion</text>
+  <line x1="538" y1="354" x2="626" y2="354" stroke="#C8E6C9"/>
+  <text x="538" y="367" font-size="8" fill="#555">region_key (PK)</text>
+  <text x="538" y="379" font-size="8" fill="#555">region_name</text>
+  <text x="538" y="391" font-size="8" fill="#555">region_code</text>
+
+  <!-- Star lines from fact to dims -->
+  <line x1="466" y1="230" x2="466" y2="248" stroke="#4CAF50" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="582" y1="230" x2="582" y2="248" stroke="#4CAF50" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="466" y1="230" x2="466" y2="334" stroke="#4CAF50" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="582" y1="230" x2="582" y2="334" stroke="#4CAF50" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- Characteristics -->
+  <rect x="415" y="418" width="230" height="100" rx="8" fill="#DCFCE7" stroke="#A5D6A7" stroke-width="1"/>
+  <text x="530" y="436" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532D">Characteristics</text>
+  <text x="425" y="452" font-size="9" fill="#333">✔ Schema-on-write (enforced types)</text>
+  <text x="425" y="466" font-size="9" fill="#333">✔ Star schema — optimised for queries</text>
+  <text x="425" y="480" font-size="9" fill="#333">✔ Historical data with SCD Type 2</text>
+  <text x="425" y="494" font-size="9" fill="#333">✔ Single source of truth for the org</text>
+  <text x="425" y="508" font-size="9" fill="#333">✔ Supports cross-domain analysis</text>
+
+  <!-- ADF Badge -->
+  <rect x="415" y="530" width="230" height="30" rx="6" fill="#388E3C"/>
+  <text x="530" y="547" text-anchor="middle" font-size="9" font-weight="bold" fill="white">ADF: Stored Procedure + If/Else</text>
+  <text x="530" y="558" text-anchor="middle" font-size="8" fill="#C8E6C9">PL_DataWarehouse_to_DataMart</text>
+
+  <!-- ===== ARROW 2 ===== -->
+  <line x1="702" y1="370" x2="778" y2="370" stroke="#555" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="6,3"/>
+  <rect x="706" y="340" width="68" height="52" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/>
+  <text x="740" y="360" text-anchor="middle" font-size="9" font-weight="bold" fill="#E65100">ADF</text>
+  <text x="740" y="373" text-anchor="middle" font-size="8" fill="#555">Stored</text>
+  <text x="740" y="384" text-anchor="middle" font-size="8" fill="#555">Procedure</text>
+
+  <!-- ===== LAYER 3: DATA MART ===== -->
+  <rect x="780" y="80" width="290" height="520" rx="14" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+  <rect x="780" y="80" width="290" height="40" rx="14" fill="#E65100"/>
+  <rect x="780" y="106" width="290" height="14" fill="#E65100"/>
+  <text x="925" y="106" text-anchor="middle" font-size="14" font-weight="bold" fill="white">③ DATA MART</text>
+  <text x="925" y="120" text-anchor="middle" font-size="10" fill="#FFE0B2">Synapse mart schema — BI Ready</text>
+
+  <!-- Mart table 1 -->
+  <rect x="800" y="140" width="250" height="78" rx="8" fill="white" stroke="#FFCC80" stroke-width="1.5"/>
+  <rect x="800" y="140" width="250" height="22" rx="8" fill="#E65100"/>
+  <rect x="800" y="152" width="250" height="10" fill="#E65100"/>
+  <text x="925" y="156" text-anchor="middle" font-size="10" font-weight="bold" fill="white">📊 vw_MonthlySalesByRegion</text>
+  <text x="810" y="175" font-size="9" fill="#555">Used by: Executive Dashboard, Regional Mgrs</text>
+  <text x="810" y="188" font-size="9" fill="#BF360C" font-weight="bold">→ total_transactions, net_revenue</text>
+  <text x="810" y="201" font-size="9" fill="#BF360C" font-weight="bold">→ gross_profit, profit_margin_pct</text>
+
+  <!-- Mart table 2 -->
+  <rect x="800" y="232" width="250" height="78" rx="8" fill="white" stroke="#FFCC80" stroke-width="1.5"/>
+  <rect x="800" y="232" width="250" height="22" rx="8" fill="#E65100"/>
+  <rect x="800" y="244" width="250" height="10" fill="#E65100"/>
+  <text x="925" y="248" text-anchor="middle" font-size="10" font-weight="bold" fill="white">📦 vw_ProductPerformance</text>
+  <text x="810" y="267" font-size="9" fill="#555">Used by: Product Team, Category Managers</text>
+  <text x="810" y="280" font-size="9" fill="#BF360C" font-weight="bold">→ units_sold, margin_pct</text>
+  <text x="810" y="293" font-size="9" fill="#BF360C" font-weight="bold">→ rank_in_category, avg_discount</text>
+
+  <!-- Mart table 3 -->
+  <rect x="800" y="324" width="250" height="78" rx="8" fill="white" stroke="#FFCC80" stroke-width="1.5"/>
+  <rect x="800" y="324" width="250" height="22" rx="8" fill="#E65100"/>
+  <rect x="800" y="336" width="250" height="10" fill="#E65100"/>
+  <text x="925" y="340" text-anchor="middle" font-size="10" font-weight="bold" fill="white">👥 vw_CustomerSegmentAnalysis</text>
+  <text x="810" y="359" font-size="9" fill="#555">Used by: Marketing, CRM Team</text>
+  <text x="810" y="372" font-size="9" fill="#BF360C" font-weight="bold">→ active_customers, avg_order_value</text>
+  <text x="810" y="385" font-size="9" fill="#BF360C" font-weight="bold">→ revenue_per_customer</text>
+
+  <!-- Mart table 4 -->
+  <rect x="800" y="416" width="250" height="60" rx="8" fill="white" stroke="#FFCC80" stroke-width="1.5"/>
+  <rect x="800" y="416" width="250" height="22" rx="8" fill="#BF360C"/>
+  <rect x="800" y="428" width="250" height="10" fill="#BF360C"/>
+  <text x="925" y="432" text-anchor="middle" font-size="10" font-weight="bold" fill="white">⚡ WeeklyKPISnapshot (table)</text>
+  <text x="810" y="451" font-size="9" fill="#555">Pre-materialized for Power BI speed</text>
+  <text x="810" y="464" font-size="9" fill="#555">region · revenue · profit · top_product</text>
+
+  <!-- Characteristics -->
+  <rect x="800" y="490" width="250" height="80" rx="8" fill="#FEF3C7" stroke="#FFCC80" stroke-width="1"/>
+  <text x="925" y="507" text-anchor="middle" font-size="10" font-weight="bold" fill="#7C2D12">Characteristics</text>
+  <text x="810" y="522" font-size="9" fill="#333">✔ Subject-specific (Sales only)</text>
+  <text x="810" y="535" font-size="9" fill="#333">✔ Pre-aggregated for fast BI queries</text>
+  <text x="810" y="548" font-size="9" fill="#333">✔ Consumed by Power BI / Tableau</text>
+  <text x="810" y="561" font-size="9" fill="#333">✔ Refreshed on demand by ADF trigger</text>
+
+  <!-- ===== BOTTOM: TRIGGER CHAIN ===== -->
+  <rect x="30" y="620" width="1040" height="44" rx="8" fill="#37474F"/>
+  <text x="550" y="638" text-anchor="middle" font-size="10" font-weight="bold" fill="white">⏱ ADF Trigger Chain</text>
+  <text x="550" y="654" text-anchor="middle" font-size="9" fill="#CFD8DC">Schedule Trigger (02:00 UTC daily) → PL_DataLake_to_DataWarehouse → [on success] Tumbling Window Trigger → PL_DataWarehouse_to_DataMart</text>
+</svg>

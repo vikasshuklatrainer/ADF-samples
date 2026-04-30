@@ -1,0 +1,11 @@
+customer_id,first_name,last_name,email,phone,city,state,country,signup_date,segment
+C001,Alice,Johnson,alice.j@email.com,555-0101,Chicago,IL,USA,2022-03-15,Premium
+C002,Bob,Smith,bob.s@email.com,555-0102,Houston,TX,USA,2021-11-20,Standard
+C003,Carol,Williams,carol.w@email.com,555-0103,New York,NY,USA,2023-01-08,Standard
+C004,David,Brown,david.b@email.com,555-0104,Phoenix,AZ,USA,2022-07-30,Basic
+C005,Eve,Davis,eve.d@email.com,555-0105,Los Angeles,CA,USA,2021-05-12,Premium
+C006,Frank,Miller,frank.m@email.com,555-0106,San Antonio,TX,USA,2023-04-01,Basic
+C007,Grace,Wilson,grace.w@email.com,555-0107,San Diego,CA,USA,2022-09-17,Standard
+C008,Henry,Moore,henry.m@email.com,555-0108,Dallas,TX,USA,2021-12-03,Premium
+C009,Iris,Taylor,iris.t@email.com,555-0109,San Jose,CA,USA,2023-06-22,Basic
+C010,Jack,Anderson,jack.a@email.com,555-0110,Austin,TX,USA,2022-02-14,Standard

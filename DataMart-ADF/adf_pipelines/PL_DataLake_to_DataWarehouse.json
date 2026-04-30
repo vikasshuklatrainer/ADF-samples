@@ -1,0 +1,160 @@
+{
+  "name": "PL_DataLake_to_DataWarehouse",
+  "properties": {
+    "description": "Pipeline: Ingests raw CSV files from ADLS Gen2 (Data Lake) and loads a Star Schema in Azure Synapse (Data Warehouse). Runs daily at 02:00 UTC.",
+    "activities": [
+
+      {
+        "name": "ACT_Validate_SourceFiles",
+        "type": "Validation",
+        "description": "Confirm all three raw CSV files exist in the lake before processing.",
+        "typeProperties": {
+          "dataset": { "referenceName": "DS_ADLS_RawSalesFolder", "type": "DatasetReference" },
+          "timeout": "0.00:10:00",
+          "sleep": 10,
+          "minimumSize": 1
+        }
+      },
+
+      {
+        "name": "ACT_CopyRaw_Transactions",
+        "type": "Copy",
+        "description": "Copy raw_sales_transactions.csv → staging.SalesTransactions in Synapse.",
+        "dependsOn": [
+          { "activity": "ACT_Validate_SourceFiles", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "source": {
+            "type": "DelimitedTextSource",
+            "storeSettings": { "type": "AzureBlobFSReadSettings", "recursive": false },
+            "formatSettings": { "type": "DelimitedTextReadSettings", "skipLineCount": 0 }
+          },
+          "sink": {
+            "type": "SqlDWSink",
+            "preCopyScript": "TRUNCATE TABLE staging.SalesTransactions",
+            "writeBatchSize": 10000,
+            "tableOption": "autoCreate"
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": { "allowDataTruncation": true, "treatBooleanAsNumber": false }
+          }
+        },
+        "inputs":  [{ "referenceName": "DS_ADLS_RawTransactions", "type": "DatasetReference" }],
+        "outputs": [{ "referenceName": "DS_Synapse_StagingTransactions", "type": "DatasetReference" }]
+      },
+
+      {
+        "name": "ACT_CopyRaw_Customers",
+        "type": "Copy",
+        "description": "Copy raw_customers.csv → staging.Customers in Synapse.",
+        "dependsOn": [
+          { "activity": "ACT_Validate_SourceFiles", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "source": { "type": "DelimitedTextSource" },
+          "sink": {
+            "type": "SqlDWSink",
+            "preCopyScript": "TRUNCATE TABLE staging.Customers",
+            "tableOption": "autoCreate"
+          }
+        },
+        "inputs":  [{ "referenceName": "DS_ADLS_RawCustomers", "type": "DatasetReference" }],
+        "outputs": [{ "referenceName": "DS_Synapse_StagingCustomers", "type": "DatasetReference" }]
+      },
+
+      {
+        "name": "ACT_CopyRaw_Products",
+        "type": "Copy",
+        "description": "Copy raw_products.csv → staging.Products in Synapse.",
+        "dependsOn": [
+          { "activity": "ACT_Validate_SourceFiles", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "source": { "type": "DelimitedTextSource" },
+          "sink": {
+            "type": "SqlDWSink",
+            "preCopyScript": "TRUNCATE TABLE staging.Products",
+            "tableOption": "autoCreate"
+          }
+        },
+        "inputs":  [{ "referenceName": "DS_ADLS_RawProducts", "type": "DatasetReference" }],
+        "outputs": [{ "referenceName": "DS_Synapse_StagingProducts", "type": "DatasetReference" }]
+      },
+
+      {
+        "name": "ACT_DataFlow_TransformAndLoad",
+        "type": "ExecuteDataFlow",
+        "description": "Mapping Data Flow: cleanses data, applies SCD Type 2 on DimCustomer, and populates all Dim + Fact tables.",
+        "dependsOn": [
+          { "activity": "ACT_CopyRaw_Transactions", "dependencyConditions": ["Succeeded"] },
+          { "activity": "ACT_CopyRaw_Customers",    "dependencyConditions": ["Succeeded"] },
+          { "activity": "ACT_CopyRaw_Products",     "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "dataflow": { "referenceName": "DF_Transform_StarSchema", "type": "DataFlowReference" },
+          "compute": {
+            "coreCount": 8,
+            "computeType": "General"
+          },
+          "traceLevel": "Fine",
+          "continuationSettings": { "customizedCheckpointKey": "DF_TransformCheckpoint" }
+        }
+      },
+
+      {
+        "name": "ACT_ArchiveProcessedFiles",
+        "type": "Copy",
+        "description": "Move processed files to the /archive/ folder with a date partition.",
+        "dependsOn": [
+          { "activity": "ACT_DataFlow_TransformAndLoad", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "source": { "type": "DelimitedTextSource" },
+          "sink": {
+            "type": "DelimitedTextSink",
+            "storeSettings": {
+              "type": "AzureBlobFSWriteSettings",
+              "copyBehavior": "PreserveHierarchy"
+            }
+          },
+          "deleteMatchingFiles": true
+        },
+        "inputs":  [{ "referenceName": "DS_ADLS_RawSalesFolder", "type": "DatasetReference" }],
+        "outputs": [{ "referenceName": "DS_ADLS_ArchiveFolder",  "type": "DatasetReference" }]
+      },
+
+      {
+        "name": "ACT_LogSuccess",
+        "type": "SqlServerStoredProcedure",
+        "description": "Write a success record to the pipeline audit log table.",
+        "dependsOn": [
+          { "activity": "ACT_ArchiveProcessedFiles", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "storedProcedureName": "audit.usp_LogPipelineRun",
+          "storedProcedureParameters": {
+            "pipeline_name":  { "value": "@pipeline().Pipeline",  "type": "String" },
+            "run_id":         { "value": "@pipeline().RunId",      "type": "String" },
+            "status":         { "value": "SUCCESS",                "type": "String" },
+            "rows_processed": { "value": "@activity('ACT_CopyRaw_Transactions').output.rowsCopied", "type": "Int32" }
+          }
+        },
+        "linkedServiceName": { "referenceName": "LS_AzureSynapse", "type": "LinkedServiceReference" }
+      }
+    ],
+
+    "parameters": {
+      "SourceContainer":  { "type": "string", "defaultValue": "raw" },
+      "TargetSchema":     { "type": "string", "defaultValue": "dbo" }
+    },
+
+    "variables": {
+      "ProcessDate": { "type": "String" }
+    },
+
+    "annotations": ["Layer: DataLake-to-DataWarehouse", "Owner: DataEngineering", "Schedule: Daily 02:00 UTC"]
+  }
+}

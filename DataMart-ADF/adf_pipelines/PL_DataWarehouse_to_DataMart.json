@@ -1,0 +1,133 @@
+{
+  "name": "PL_DataWarehouse_to_DataMart",
+  "properties": {
+    "description": "Pipeline: Reads from the Star Schema (Data Warehouse) in Synapse and populates the pre-aggregated Sales Data Mart tables/views. Runs after PL_DataLake_to_DataWarehouse completes.",
+    "activities": [
+
+      {
+        "name": "ACT_Check_FactSales_Updated",
+        "type": "Lookup",
+        "description": "Verify FactSales has rows for today before building the mart.",
+        "typeProperties": {
+          "source": {
+            "type": "SqlDWSource",
+            "sqlReaderQuery": "SELECT COUNT(*) AS row_count FROM dbo.FactSales WHERE date_key = CAST(FORMAT(GETDATE(),'yyyyMMdd') AS INT)"
+          },
+          "dataset": { "referenceName": "DS_Synapse_FactSales", "type": "DatasetReference" },
+          "firstRowOnly": true
+        }
+      },
+
+      {
+        "name": "ACT_If_FactRows_Exist",
+        "type": "IfCondition",
+        "description": "Only proceed if FactSales has data for today.",
+        "dependsOn": [
+          { "activity": "ACT_Check_FactSales_Updated", "dependencyConditions": ["Succeeded"] }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(activity('ACT_Check_FactSales_Updated').output.firstRow.row_count, 0)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+
+            {
+              "name": "ACT_Refresh_MonthlySalesByRegion",
+              "type": "SqlServerStoredProcedure",
+              "description": "Refresh the pre-aggregated mart table for monthly regional sales.",
+              "typeProperties": {
+                "storedProcedureName": "mart.usp_Refresh_MonthlySalesByRegion",
+                "storedProcedureParameters": {
+                  "target_year":  { "value": "@formatDateTime(utcNow(),'yyyy')", "type": "String" },
+                  "target_month": { "value": "@formatDateTime(utcNow(),'MM')",   "type": "String" }
+                }
+              },
+              "linkedServiceName": { "referenceName": "LS_AzureSynapse", "type": "LinkedServiceReference" }
+            },
+
+            {
+              "name": "ACT_Refresh_ProductPerformance",
+              "type": "SqlServerStoredProcedure",
+              "description": "Rebuild the product performance mart table.",
+              "typeProperties": {
+                "storedProcedureName": "mart.usp_Refresh_ProductPerformance"
+              },
+              "linkedServiceName": { "referenceName": "LS_AzureSynapse", "type": "LinkedServiceReference" }
+            },
+
+            {
+              "name": "ACT_Refresh_CustomerSegment",
+              "type": "SqlServerStoredProcedure",
+              "description": "Rebuild the customer segment analysis mart table.",
+              "typeProperties": {
+                "storedProcedureName": "mart.usp_Refresh_CustomerSegmentAnalysis"
+              },
+              "linkedServiceName": { "referenceName": "LS_AzureSynapse", "type": "LinkedServiceReference" }
+            },
+
+            {
+              "name": "ACT_Populate_WeeklyKPISnapshot",
+              "type": "SqlServerStoredProcedure",
+              "description": "Insert this week's KPI snapshot row (runs every Monday).",
+              "dependsOn": [
+                { "activity": "ACT_Refresh_MonthlySalesByRegion", "dependencyConditions": ["Succeeded"] },
+                { "activity": "ACT_Refresh_ProductPerformance",   "dependencyConditions": ["Succeeded"] },
+                { "activity": "ACT_Refresh_CustomerSegment",       "dependencyConditions": ["Succeeded"] }
+              ],
+              "typeProperties": {
+                "storedProcedureName": "mart.usp_Insert_WeeklyKPISnapshot"
+              },
+              "linkedServiceName": { "referenceName": "LS_AzureSynapse", "type": "LinkedServiceReference" }
+            },
+
+            {
+              "name": "ACT_Export_Mart_to_PowerBI",
+              "type": "Copy",
+              "description": "Optional: export mart CSV snapshots to ADLS for Power BI DirectQuery or import mode.",
+              "dependsOn": [
+                { "activity": "ACT_Populate_WeeklyKPISnapshot", "dependencyConditions": ["Succeeded"] }
+              ],
+              "typeProperties": {
+                "source": {
+                  "type": "SqlDWSource",
+                  "sqlReaderQuery": "SELECT * FROM mart.vw_MonthlySalesByRegion WHERE year_num = YEAR(GETDATE())"
+                },
+                "sink": {
+                  "type": "DelimitedTextSink",
+                  "storeSettings": {
+                    "type": "AzureBlobFSWriteSettings"
+                  },
+                  "formatSettings": {
+                    "type": "DelimitedTextWriteSettings",
+                    "quoteAllText": true,
+                    "fileExtension": ".csv"
+                  }
+                }
+              },
+              "inputs":  [{ "referenceName": "DS_Synapse_MartView", "type": "DatasetReference" }],
+              "outputs": [{ "referenceName": "DS_ADLS_MartExport",  "type": "DatasetReference" }]
+            }
+          ],
+
+          "ifFalseActivities": [
+            {
+              "name": "ACT_SendAlert_NoData",
+              "type": "WebActivity",
+              "description": "Send a Teams notification if FactSales has no data for today.",
+              "typeProperties": {
+                "method": "POST",
+                "url": "https://outlook.office.com/webhook/<YOUR_TEAMS_WEBHOOK>",
+                "body": {
+                  "text": "⚠️ WARNING: FactSales has no rows for today. Data Mart refresh skipped."
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+
+    "annotations": ["Layer: DataWarehouse-to-DataMart", "Owner: Analytics", "Schedule: Triggered by PL_DataLake_to_DataWarehouse"]
+  }
+}

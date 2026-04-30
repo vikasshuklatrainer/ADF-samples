@@ -1,0 +1,6 @@
+product_id,product_name,category,sub_category,brand,cost_price,list_price,sku,supplier_id
+P101,Wireless Mouse,Electronics,Peripherals,TechBrand,12.50,29.99,SKU-WM-001,SUP01
+P102,Bluetooth Headphones,Electronics,Audio,SoundPro,65.00,149.99,SKU-BH-002,SUP02
+P103,USB-C Cable 2m,Electronics,Accessories,CableCo,2.10,9.99,SKU-UC-003,SUP01
+P104,AA Batteries (4-pack),Electronics,Power,EnergyMax,1.50,4.99,SKU-BA-004,SUP03
+P105,Mechanical Keyboard,Electronics,Peripherals,TechBrand,120.00,299.99,SKU-MK-005,SUP02
