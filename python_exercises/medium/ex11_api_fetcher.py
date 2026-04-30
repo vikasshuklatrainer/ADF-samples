@@ -19,51 +19,32 @@
 # Call writer.writeheader() before writer.writerows().
 # ============================================================
 
-import requests, csv
+# ============================================================
+# Exercise 11 — REST API Data Fetcher                [MEDIUM]
+# Topic: APIs
+# ============================================================
 
-# --- YOUR CODE HERE ---
+import requests
+import csv
+
 def fetch_posts(url: str) -> list:
-    pass
+    resp = requests.get(url, timeout=10)
+    resp.raise_for_status()
+    return resp.json()
 
 def extract_fields(posts: list) -> list:
-    pass
+    return [
+        {"userId": p["userId"], "id": p["id"], "title": p["title"]}
+        for p in posts
+    ]
 
 def write_csv(records: list, path: str):
-    pass
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["userId", "id", "title"])
+        writer.writeheader()
+        writer.writerows(records)
 
-
-try:
-    posts   = fetch_posts("https://jsonplaceholder.typicode.com/posts")
-    records = extract_fields(posts)
-    write_csv(records, "posts.csv")
-    print(f"Saved {len(records)} posts to posts.csv")
-    print(records[:2])
-except requests.exceptions.RequestException as e:
-    print(f"Request failed: {e}")
-
-
-# ============================================================
-# SOLUTION
-# ============================================================
-
-def solution():
-    def fetch_posts(url: str) -> list:
-        resp = requests.get(url, timeout=10)
-        resp.raise_for_status()
-        return resp.json()
-
-    def extract_fields(posts: list) -> list:
-        return [
-            {"userId": p["userId"], "id": p["id"], "title": p["title"]}
-            for p in posts
-        ]
-
-    def write_csv(records: list, path: str):
-        with open(path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=["userId", "id", "title"])
-            writer.writeheader()
-            writer.writerows(records)
-
+if __name__ == "__main__":
     try:
         posts   = fetch_posts("https://jsonplaceholder.typicode.com/posts")
         records = extract_fields(posts)
@@ -72,6 +53,3 @@ def solution():
         print(records[:2])
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
-
-if __name__ == "__main__":
-    solution()
