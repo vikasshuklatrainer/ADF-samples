@@ -50,4 +50,14 @@ def solution():
     print(f"\nInteger count (excl. bool): {int_count}")
 
 if __name__ == "__main__":
-    solution()
+    # solution()
+    values = [42, '99', 3.14, True, None, '007', False]
+    for v in values:
+        print(f"{v!r:<10} → {type(v).__name__}")
+
+        int_count = sum(
+        1 for v in values
+        if isinstance(v, int) and not isinstance(v, bool)
+
+        )
+        print(f"\nInteger count (excl. bool): {int_count}")   

@@ -24,8 +24,8 @@ import re
 from collections import Counter
 
 text = """Data engineering involves collecting, processing,
-and storing data. Engineers write pipelines that move
-data from sources to destinations. Data quality matters."""
+and storing data. Engineers abhinav write pipelines that move
+data from sources to destinations. Data quality abhinav matters."""
 
 def word_freq(text: str) -> dict:
     words = re.findall(r"[a-z]+", text.lower())
